@@ -1,5 +1,6 @@
 # Stage 1: Build the Flutter web application
-FROM cirrusci/flutter:stable AS build
+# Use the new, official Flutter image from GitHub Container Registry
+FROM ghcr.io/cirruslabs/flutter:3.35.5 AS build
 
 # Set the working directory
 WORKDIR /app
@@ -28,3 +29,4 @@ EXPOSE 80
 
 # Start Nginx when the container launches
 CMD ["nginx", "-g", "daemon off;"]
+
