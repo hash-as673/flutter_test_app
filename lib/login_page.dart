@@ -36,7 +36,8 @@ class _LoginPageState extends State<LoginPage> {
         if (success) {
           // On successful login, navigate to the home screen using the named route
           // and pass the email as an argument.
-          Navigator.of(context).pushReplacementNamed('/home', arguments: email);
+          // After the fix
+          Navigator.of(context).pushReplacementNamed('/myapp/home', arguments: email);
         } else {
           setState(() {
             _errorMessage = 'Invalid email or password.';
