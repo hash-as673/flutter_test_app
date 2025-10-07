@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'home_screen.dart';
-import 'login_page.dart'; // 1. Import the package
-
+import 'login_page.dart';
 
 void main() {
-  setPathUrlStrategy(); // 2. Call this function before runApp
+  setPathUrlStrategy();
   runApp(const MyApp());
 }
 
-// MyApp is the root widget of the application.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -23,13 +21,12 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         useMaterial3: true,
       ),
-      // Define the initial route and the routing table for the app.
-      initialRoute: '/login',
+      // Update the initial route and the routing table.
+      initialRoute: '/myapp/login', // <-- Change here
       routes: {
-        '/login': (context) => const LoginPage(),
-        '/home': (context) => const HomeScreen(),
+        '/myapp/login': (context) => const LoginPage(), // <-- Change here
+        '/myapp/home': (context) => const HomeScreen(),   // <-- Change here
       },
     );
   }
 }
-
