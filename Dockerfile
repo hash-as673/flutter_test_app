@@ -1,32 +1,24 @@
-# Stage 1: Build the Flutter web application
-# Use the new, official Flutter image from GitHub Container Registry
-FROM ghcr.io/cirruslabs/flutter:3.35.5 AS build
+# Stage 1: Flutter build
+FROM ubuntu:22.04 AS builder
 
-# Set the working directory
+# Install dependencies
+RUN apt-get update && apt-get install -y curl git unzip xz-utils && rm -rf /var/lib/apt/lists/*
+RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
+ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
+
+# Enable web and prepare app
+RUN flutter config --enable-web
+
 WORKDIR /app
-
-# Copy the pubspec file and get dependencies
-COPY pubspec.* ./
-RUN flutter pub get
-
-# Copy the rest of the application source code
 COPY . .
+RUN flutter pub get
+RUN flutter build web --base-href /myapp/
 
-# Build the web application for release
-RUN flutter build web --release
-
-# Stage 2: Serve the application with Nginx
+# Stage 2: Nginx serving built app
 FROM nginx:alpine
+RUN apk update && apk upgrade
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder /app/build/web/ /usr/share/nginx/html
 
-# Copy the built web application from the build stage to the Nginx html directory
-COPY --from=build /app/build/web /usr/share/nginx/html
-
-# Copy the custom Nginx configuration file
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 80
 EXPOSE 80
-
-# Start Nginx when the container launches
 CMD ["nginx", "-g", "daemon off;"]
-

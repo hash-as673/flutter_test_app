@@ -9,7 +9,7 @@
       "dependencies": [
         "cupertino_icons",
         "flutter",
-        "url_strategy"
+        "flutter_web_plugins"
       ],
       "devDependencies": [
         "flutter_lints",
@@ -47,10 +47,10 @@
       "dependencies": []
     },
     {
-      "name": "url_strategy",
-      "version": "0.2.0",
+      "name": "flutter_web_plugins",
+      "version": "0.0.0",
       "dependencies": [
-        "flutter_web_plugins"
+        "flutter"
       ]
     },
     {
@@ -152,13 +152,6 @@
         "stream_channel",
         "string_scanner",
         "term_glyph"
-      ]
-    },
-    {
-      "name": "flutter_web_plugins",
-      "version": "0.0.0",
-      "dependencies": [
-        "flutter"
       ]
     },
     {

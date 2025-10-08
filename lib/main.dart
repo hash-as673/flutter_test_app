@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:url_strategy/url_strategy.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'home_screen.dart';
 import 'login_page.dart';
 
 void main() {
-  setPathUrlStrategy();
+  usePathUrlStrategy();
   runApp(const MyApp());
 }
 
@@ -22,10 +22,11 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // Update the initial route and the routing table.
-      initialRoute: '/myapp/login', // <-- Change here
+      initialRoute: '/', // <-- Change here
       routes: {
-        '/myapp/login': (context) => const LoginPage(), // <-- Change here
-        '/myapp/home': (context) => const HomeScreen(),   // <-- Change here
+        '/': (context) => const LoginPage(),
+        '/login': (context) => const LoginPage(), // <-- Change here
+        '/home': (context) => const HomeScreen(),   // <-- Change here
       },
     );
   }
