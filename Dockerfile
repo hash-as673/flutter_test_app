@@ -1,24 +1,30 @@
-# Stage 1: Flutter build
-FROM ubuntu:22.04 AS builder
-
-# Install dependencies
-RUN apt-get update && apt-get install -y curl git unzip xz-utils && rm -rf /var/lib/apt/lists/*
-RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
-ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
-
-# Enable web and prepare app
-RUN flutter config --enable-web
+FROM ghcr.io/cirruslabs/flutter:3.35.5 AS flutter-build
 
 WORKDIR /app
 COPY . .
 RUN flutter pub get
 RUN flutter build web --base-href /myapp/
 
-# Stage 2: Nginx serving built app
-FROM nginx:alpine
-RUN apk update && apk upgrade
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=builder /app/build/web/ /usr/share/nginx/html
+# Create WEB-INF and web.xml for SPA routing
+RUN mkdir -p /app/build/web/WEB-INF
+RUN echo '<web-app>\n\
+  <welcome-file-list>\n\
+    <welcome-file>index.html</welcome-file>\n\
+  </welcome-file-list>\n\
+  <error-page>\n\
+    <error-code>404</error-code>\n\
+    <location>/index.html</location>\n\
+  </error-page>\n\
+</web-app>' > /app/build/web/WEB-INF/web.xml
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Package into WAR
+RUN cd /app/build/web && \
+    zip -r /app/myapp.war .
+
+FROM jboss/wildfly:latest
+
+# Deploy WAR
+COPY --from=flutter-build /app/myapp.war /opt/jboss/wildfly/standalone/deployments/myapp.war
+
+EXPOSE 8080
+CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0"]
